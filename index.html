@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IdeaCollab - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/login.css">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="login-container">
+        <div class="glass-card">
+            <header>
+                <h1>Willkommen</h1>
+                <p>Bitte melde dich an, um Ideen zu teilen.</p>
+            </header>
+
+            <div class="auth-toggle">
+                <button id="showLoginBtn" class="active">Anmelden</button>
+                <button id="showRegisterBtn">Registrieren</button>
+            </div>
+
+            <form id="authForm">
+                <div class="input-group" id="nameGroup" style="display: none;">
+                    <input type="text" id="name" placeholder=" " autocomplete="off">
+                    <label for="name">Dein Name</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" id="email" placeholder=" " required autocomplete="off">
+                    <label for="email">E-Mail Adresse</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="password" placeholder=" " required autocomplete="off">
+                    <label for="password">Passwort</label>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span>Anmelden</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                </button>
+                <p id="errorMsg" class="error-msg"></p>
+            </form>
+        </div>
+    </main>
+
+    <script src="scripts/auth.js"></script>
+</body>
+
+</html>
