@@ -118,42 +118,54 @@ if (authForm) {
                 return;
             }
 
-            const res = await fetch(`${API_URL}/api/auth/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password, role: 'user' })
-            });
-            const data = await res.json();
+            try {
+                const res = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role: 'user' })
+                });
 
-            if (data.error) {
-                errorMsg.textContent = data.error;
-            } else {
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Serverfehler');
+                }
+
+                const data = await res.json();
+
                 localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', data.user.name);
                 localStorage.setItem('currentUserEmail', data.user.email);
                 localStorage.setItem('currentUserRole', data.user.role);
                 localStorage.setItem('currentUserId', data.user.id);
                 window.location.href = 'dashboard.html';
+            } catch (err) {
+                errorMsg.textContent = err.message;
             }
 
         } else {
             // Login Flow
-            const res = await fetch(`${API_URL}/api/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
+            try {
+                const res = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
 
-            if (data.error) {
-                errorMsg.textContent = 'Login fehlgeschlagen: ' + data.error;
-            } else {
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Login fehlgeschlagen');
+                }
+
+                const data = await res.json();
+
                 localStorage.setItem('authToken', data.token);
                 localStorage.setItem('currentUser', data.user.name);
                 localStorage.setItem('currentUserEmail', data.user.email);
                 localStorage.setItem('currentUserRole', data.user.role);
                 localStorage.setItem('currentUserId', data.user.id);
                 window.location.href = 'dashboard.html';
+            } catch (err) {
+                errorMsg.textContent = err.message;
             }
         }
     });
