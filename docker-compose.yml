@@ -16,7 +16,7 @@ services:
     depends_on:
       - backend
 
-  backend:
+  #backend:
     build: ./server
     container_name: dashboardkidslab-backend
     restart: unless-stopped
