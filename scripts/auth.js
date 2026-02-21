@@ -1,10 +1,59 @@
 // Auth Logic
 const currentUser = localStorage.getItem('currentUser');
+const authToken = localStorage.getItem('authToken');
 const path = window.location.pathname;
 
+<<<<<<< HEAD
 const API_BASE = '/api';
 
 // Redirect logic
+=======
+// Helper to make authenticated requests
+window.apiCall = async (endpoint, method = 'GET', body = null) => {
+    const headers = { 'Content-Type': 'application/json' };
+    if (localStorage.getItem('authToken')) {
+        headers['Authorization'] = `Bearer ${localStorage.getItem('authToken')}`;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/api${endpoint}`, {
+            method,
+            headers,
+            body: body ? JSON.stringify(body) : null
+        });
+
+        if (response.status === 401) {
+            window.logout();
+            return null;
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        return { error: 'Network error' };
+    }
+};
+
+window.authSystem = {
+    getUsers: async () => {
+        const users = await window.apiCall('/users');
+        return users || [];
+    },
+    // We don't expose full addUser/updateUser to client directly in the same way, 
+    // but we can map them to API calls
+    addUser: async (userData) => {
+        return await window.apiCall('/auth/register', 'POST', userData);
+    },
+    updateUser: async (email, data) => {
+        // Not fully implemented in backend yet for update, but placeholder
+        console.warn('Update user via API not fully implemented yet');
+        return true;
+    },
+    findUser: () => { console.warn('findUser not available in API mode (async)'); return null; }
+};
+
+// Path handling
+>>>>>>> d3ae95957e06bf503998994c7fea4394acb73a52
 const isDashboard = path.endsWith('dashboard.html');
 const isLogin = path.endsWith('index.html') || path.endsWith('/');
 
@@ -55,6 +104,10 @@ if (authForm) {
     showLoginBtn.addEventListener('click', () => toggleMode(false));
     showRegisterBtn.addEventListener('click', () => toggleMode(true));
 
+<<<<<<< HEAD
+=======
+    // Handle Submit
+>>>>>>> d3ae95957e06bf503998994c7fea4394acb73a52
     authForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         errorMsg.textContent = '';
@@ -62,6 +115,7 @@ if (authForm) {
         const email = emailInput.value.trim().toLowerCase();
         const password = passwordInput.value.trim();
 
+<<<<<<< HEAD
         try {
             if (isRegisterMode) {
                 const name = nameInput.value.trim();
@@ -93,6 +147,64 @@ if (authForm) {
                 localStorage.setItem('currentUserEmail', data.email);
                 localStorage.setItem('currentUserRole', data.role);
                 window.location.href = 'dashboard.html';
+=======
+        if (isRegisterMode) {
+            // Register Flow
+            const name = nameInput.value.trim();
+            if (password.length < 4) {
+                errorMsg.textContent = 'Passwort muss mindestens 4 Zeichen lang sein.';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role: 'user' })
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Serverfehler');
+                }
+
+                const data = await res.json();
+
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('currentUser', data.user.name);
+                localStorage.setItem('currentUserEmail', data.user.email);
+                localStorage.setItem('currentUserRole', data.user.role);
+                localStorage.setItem('currentUserId', data.user.id);
+                window.location.href = 'dashboard.html';
+            } catch (err) {
+                errorMsg.textContent = err.message;
+            }
+
+        } else {
+            // Login Flow
+            try {
+                const res = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.error || 'Login fehlgeschlagen');
+                }
+
+                const data = await res.json();
+
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('currentUser', data.user.name);
+                localStorage.setItem('currentUserEmail', data.user.email);
+                localStorage.setItem('currentUserRole', data.user.role);
+                localStorage.setItem('currentUserId', data.user.id);
+                window.location.href = 'dashboard.html';
+            } catch (err) {
+                errorMsg.textContent = err.message;
+>>>>>>> d3ae95957e06bf503998994c7fea4394acb73a52
             }
         } catch (err) {
             errorMsg.textContent = err.message;
@@ -104,6 +216,8 @@ window.logout = function () {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('currentUserEmail');
     localStorage.removeItem('currentUserRole');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUserId');
     localStorage.setItem('justLoggedOut', 'true');
     window.location.href = 'index.html';
 };
