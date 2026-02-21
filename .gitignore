@@ -1,0 +1,17 @@
+# SQLite databases
+backend/data/*.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+.npm
